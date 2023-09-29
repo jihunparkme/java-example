@@ -37,6 +37,9 @@ public class StreamTest {
     @Test
     @DisplayName("spring 으로 시작하는 수업")
     void test01() {
+        /**
+         * Stream<T> filter(Predicate<? super T> predicate);
+         */
         List<OnlineClass> springClass = springClasses.stream()
                 .filter(oc -> oc.getTitle().startsWith("spring"))
                 .collect(Collectors.toList());
@@ -55,6 +58,9 @@ public class StreamTest {
     @Test
     @DisplayName("수업 이름만 모아서 스트림 만들기")
     void test03() {
+        /**
+         * <R> Stream<R> map(Function<? super T, ? extends R> mapper);
+         */
         springClasses.stream()
                 .map(OnlineClass::getTitle)
                 .forEach(System.out::println);
@@ -63,6 +69,9 @@ public class StreamTest {
     @Test
     @DisplayName("두 수업 목록에 들어 있는 모든 수업 아이디")
     void test04() {
+        /**
+         * <R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper);
+         */
         List<OnlineClass> allClasses = aaronEvents.stream()
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
@@ -73,15 +82,25 @@ public class StreamTest {
     @Test
     @DisplayName("10부터 1씩 증가하는 무제한 스트림 중에서 앞에 10개 빼고 최대 10개 까지만")
     void test05() {
-        Stream.iterate(10, i -> i + 1)
+        /**
+         * public static<T> Stream<T> iterate(final T seed, final UnaryOperator<T> f)
+         * Stream<T> skip(long n);
+         * Stream<T> limit(long maxSize);
+         * long count();
+         */
+        long count = Stream.iterate(10, i -> i + 1)
                 .skip(10)
                 .limit(10)
-                .forEach(System.out::println);
+                .count();
+        Assertions.assertEquals(10, count);
     }
 
     @Test
     @DisplayName("자바 수업 중 Test가 들어 있는 수업이 있는지 확인")
     void test06() {
+        /**
+         * boolean anyMatch(Predicate<? super T> predicate);
+         */
         boolean result = javaClasses.stream()
                 .anyMatch(oc -> oc.getTitle().contains("Test"));
         Assertions.assertTrue(result);
