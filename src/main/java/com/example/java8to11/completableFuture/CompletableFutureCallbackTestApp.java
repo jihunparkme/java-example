@@ -31,7 +31,7 @@ public class CompletableFutureCallbackTestApp {
         System.out.println("CompletableFutureTestApp.thenAccept");
         /**
          * public CompletableFuture<Void> thenAccept(Consumer<? super T> action)
-         * - 리턴값을 또 다른 작업을 처리하고 리턴이 없는 콜백
+         * - 리턴값으로 또 다른 작업을 처리하고 리턴이 없는 콜백
          */
         CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
             System.out.println("Hello " + Thread.currentThread().getName());
@@ -47,11 +47,10 @@ public class CompletableFutureCallbackTestApp {
         System.out.println("CompletableFutureTestApp.thenRun");
         /**
          * public CompletableFuture<Void> thenRun(Runnable action)
-         * - 리턴값 받지 않고 다른 작업을 처리하는 콜백
+         * - 리턴값을 받지 않고 다른 작업을 처리하는 콜백
          */
-        CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             System.out.println("Hello " + Thread.currentThread().getName());
-            return "Hello";
         }).thenRun(() -> {
             System.out.println(Thread.currentThread().getName());
         });
@@ -60,15 +59,14 @@ public class CompletableFutureCallbackTestApp {
     }
 
     private static void customThreadPool() throws ExecutionException, InterruptedException {
-        System.out.println("\nCompletableFutureTestApp.async");
+        System.out.println("\nCompletableFutureTestApp.customThreadPool");
         /**
          * 원하는 Executor(thread-pool)를 사용해서 실행 가능
          * - default: ForkJoinPool.commonPool()
          */
         ExecutorService executorService = Executors.newFixedThreadPool(4);
-        CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             System.out.println("Hello " + Thread.currentThread().getName());
-            return "Hello";
         }, executorService).thenRunAsync(() -> {
             System.out.println(Thread.currentThread().getName());
         }, executorService);
