@@ -1,6 +1,5 @@
 package com.example.java8to11.completableFuture;
 
-import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -51,6 +50,4 @@ public class CompletableFutureTestApp {
 
         System.out.println(future.get());
     }
-
-
 }
