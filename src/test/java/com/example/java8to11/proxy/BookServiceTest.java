@@ -1,5 +1,7 @@
 package com.example.java8to11.proxy;
 
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.implementation.InvocationHandlerAdapter;
 import org.junit.jupiter.api.Test;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
@@ -8,6 +10,8 @@ import org.springframework.cglib.proxy.MethodProxy;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+
+import static net.bytebuddy.matcher.ElementMatchers.named;
 
 class BookServiceTest {
 
@@ -53,6 +57,28 @@ class BookServiceTest {
             }
         };
         BallService ballService = (BallService) Enhancer.create(BallService.class, handler);
+
+        Book book = new Book();
+        book.setTitle("spring");
+        ballService.rent(book);
+    }
+
+    @Test
+    void byteBuddy_proxy() throws Exception {
+        Class<? extends BallService> proxyClass = new ByteBuddy().subclass(BallService.class)
+                .method(named("rent")).intercept(InvocationHandlerAdapter.of(new InvocationHandler() {
+                    BallService bookService = new BallService();
+
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        System.out.println("qqqq");
+                        Object invoke = method.invoke(bookService, args);
+                        System.out.println("eeee");
+                        return invoke;
+                    }
+                }))
+                .make().load(BallService.class.getClassLoader()).getLoaded();
+        BallService ballService = proxyClass.getConstructor(null).newInstance();
 
         Book book = new Book();
         book.setTitle("spring");
