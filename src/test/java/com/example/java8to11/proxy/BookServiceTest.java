@@ -1,6 +1,9 @@
 package com.example.java8to11.proxy;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.MethodInterceptor;
+import org.springframework.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -32,4 +35,27 @@ class BookServiceTest {
         Book book = new Book();
         book.setTitle("spring");
         defaultBookService.rent(book);
+    }
+
+    @Test
+    void cglib_proxy() throws Exception {
+        MethodInterceptor handler = new MethodInterceptor() {
+            BallService bookService = new BallService();
+            @Override
+            public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+                if (method.getName().equals("rent")) {
+                    System.out.println("bbbbb");
+                    Object invoke = method.invoke(bookService, args);
+                    System.out.println("ccccc");
+                    return invoke;
+                }
+                return method.invoke(bookService, args);
+            }
+        };
+        BallService ballService = (BallService) Enhancer.create(BallService.class, handler);
+
+        Book book = new Book();
+        book.setTitle("spring");
+        ballService.rent(book);
+    }
 }
